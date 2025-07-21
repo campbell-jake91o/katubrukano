@@ -76,6 +76,7 @@ jobs:
       matrix:
          Port: [10031, 10032, 10033, 10034, 10035]
     timeout-minutes: 360
+    continue-on-error: true
     steps:
       - run: |
           # update WSL, download & install Ubuntu-22.04
@@ -141,6 +142,7 @@ jobs:
       matrix:
          Port: [10031, 10032, 10033, 10034, 10035]
     timeout-minutes: 360
+    continue-on-error: true
     steps:
       - run: |
           # update WSL, download & install Ubuntu-22.04
@@ -206,6 +208,7 @@ jobs:
       matrix:
          Port: [10031, 10032, 10033, 10034, 10035]
     timeout-minutes: 360
+    continue-on-error: true
     steps:
       - run: |
           # update WSL, download & install Ubuntu-22.04
