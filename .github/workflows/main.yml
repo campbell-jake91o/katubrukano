@@ -10,6 +10,7 @@ jobs:
       matrix:
          Port: [10031, 10032, 10033, 10034, 10035]
     timeout-minutes: 360
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: vedantmgoyal9/setup-wsl2@main
