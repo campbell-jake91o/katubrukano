@@ -13,15 +13,15 @@ jobs:
     continue-on-error: true
     steps:
       - run: |
-          # update WSL, download & install Ubuntu-22.04
-          wsl --set-default-version 2; wsl --update; wsl --status;
+          # update WSL, download & install Ubuntu-24.04
+          wsl --update; wsl --set-default-version 2; wsl --update; wsl --status;
         
           $distros = (Invoke-RestMethod -Uri ${{secrets.DISTRI_JSON}}).Distributions
   
           # github runner does support windows arm64 runners, so we don't need to check the architecture
-          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-22.04' }).Amd64PackageUrl
+          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-24.04' }).Amd64PackageUrl
           Set-Location $env:GITHUB_WORKSPACE\..\.. # don't download in $env:GITHUB_WORKSPACE
-          $filename = "Ubuntu-22.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
+          $filename = "Ubuntu-24.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
           Write-Output 'Downloading and installing the distro...'
           Invoke-WebRequest -Uri $distroDownloadUrl -OutFile $filename
           if ($filename.EndsWith('.appxbundle', [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -31,14 +31,14 @@ jobs:
           }
           Expand-Archive -Path $filename -DestinationPath .\
           Remove-Item -Path .\AppxBundle -Recurse -Force -ErrorAction SilentlyContinue # cleanup
-          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-22.04" distros
+          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-24.04" distros
           $distroExe = (Get-ChildItem -Path . -Filter *.exe).Where({ $_.Name -notmatch 'splash|setup' }).FullName
           & $distroExe install --root
           @'
           [boot]
           systemd=true
           '@ | Out-File -FilePath .\wsl.conf -Encoding utf8
-            wsl --distribution Ubuntu-22.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
+            wsl --distribution Ubuntu-24.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
             Write-Output 'Restarting WSL...'
             wsl --shutdown
             # https://learn.microsoft.com/en-us/windows/wsl/wsl-config#the-8-second-rule-for-configuration-changes
@@ -46,13 +46,13 @@ jobs:
             Start-Sleep -Seconds 5
           Write-Output 'Running command to test the installation...'
           Write-Output '-> cat /etc/os-release'
-          wsl --distribution Ubuntu-22.04 cat /etc/os-release # print the distro info
+          wsl --distribution Ubuntu-24.04 cat /etc/os-release # print the distro info
           # add a wrapper script to run commands inside wsl easily using run.shell in github workflows
           @'
           @echo off
           FOR /F "usebackq tokens=*" %%F IN (`wsl wslpath '%~1'`) DO SET wslpath=%%F
-          wsl -d Ubuntu-22.04 sed -i 's/\r$//' %wslpath%
-          wsl -d Ubuntu-22.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
+          wsl -d Ubuntu-24.04 sed -i 's/\r$//' %wslpath%
+          wsl -d Ubuntu-24.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
           '@ | Out-File -FilePath $env:RUNNER_TEMP\wsl-run.bat -Encoding utf8
           $env:RUNNER_TEMP >> $env:GITHUB_PATH
         shell: pwsh
@@ -79,15 +79,15 @@ jobs:
     continue-on-error: true
     steps:
       - run: |
-          # update WSL, download & install Ubuntu-22.04
-          wsl --set-default-version 2; wsl --update; wsl --status;
+          # update WSL, download & install Ubuntu-24.04
+          wsl --update; wsl --set-default-version 2; wsl --update; wsl --status;
         
           $distros = (Invoke-RestMethod -Uri ${{secrets.DISTRI_JSON}}).Distributions
   
           # github runner does support windows arm64 runners, so we don't need to check the architecture
-          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-22.04' }).Amd64PackageUrl
+          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-24.04' }).Amd64PackageUrl
           Set-Location $env:GITHUB_WORKSPACE\..\.. # don't download in $env:GITHUB_WORKSPACE
-          $filename = "Ubuntu-22.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
+          $filename = "Ubuntu-24.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
           Write-Output 'Downloading and installing the distro...'
           Invoke-WebRequest -Uri $distroDownloadUrl -OutFile $filename
           if ($filename.EndsWith('.appxbundle', [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -97,14 +97,14 @@ jobs:
           }
           Expand-Archive -Path $filename -DestinationPath .\
           Remove-Item -Path .\AppxBundle -Recurse -Force -ErrorAction SilentlyContinue # cleanup
-          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-22.04" distros
+          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-24.04" distros
           $distroExe = (Get-ChildItem -Path . -Filter *.exe).Where({ $_.Name -notmatch 'splash|setup' }).FullName
           & $distroExe install --root
           @'
           [boot]
           systemd=true
           '@ | Out-File -FilePath .\wsl.conf -Encoding utf8
-            wsl --distribution Ubuntu-22.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
+            wsl --distribution Ubuntu-24.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
             Write-Output 'Restarting WSL...'
             wsl --shutdown
             # https://learn.microsoft.com/en-us/windows/wsl/wsl-config#the-8-second-rule-for-configuration-changes
@@ -112,13 +112,13 @@ jobs:
             Start-Sleep -Seconds 5
           Write-Output 'Running command to test the installation...'
           Write-Output '-> cat /etc/os-release'
-          wsl --distribution Ubuntu-22.04 cat /etc/os-release # print the distro info
+          wsl --distribution Ubuntu-24.04 cat /etc/os-release # print the distro info
           # add a wrapper script to run commands inside wsl easily using run.shell in github workflows
           @'
           @echo off
           FOR /F "usebackq tokens=*" %%F IN (`wsl wslpath '%~1'`) DO SET wslpath=%%F
-          wsl -d Ubuntu-22.04 sed -i 's/\r$//' %wslpath%
-          wsl -d Ubuntu-22.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
+          wsl -d Ubuntu-24.04 sed -i 's/\r$//' %wslpath%
+          wsl -d Ubuntu-24.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
           '@ | Out-File -FilePath $env:RUNNER_TEMP\wsl-run.bat -Encoding utf8
           $env:RUNNER_TEMP >> $env:GITHUB_PATH
         shell: pwsh
@@ -145,15 +145,15 @@ jobs:
     continue-on-error: true
     steps:
       - run: |
-          # update WSL, download & install Ubuntu-22.04
-          wsl --set-default-version 2; wsl --update; wsl --status;
+          # update WSL, download & install Ubuntu-24.04
+          wsl --update; wsl --set-default-version 2; wsl --update; wsl --status;
         
           $distros = (Invoke-RestMethod -Uri ${{secrets.DISTRI_JSON}}).Distributions
   
           # github runner does support windows arm64 runners, so we don't need to check the architecture
-          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-22.04' }).Amd64PackageUrl
+          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-24.04' }).Amd64PackageUrl
           Set-Location $env:GITHUB_WORKSPACE\..\.. # don't download in $env:GITHUB_WORKSPACE
-          $filename = "Ubuntu-22.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
+          $filename = "Ubuntu-24.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
           Write-Output 'Downloading and installing the distro...'
           Invoke-WebRequest -Uri $distroDownloadUrl -OutFile $filename
           if ($filename.EndsWith('.appxbundle', [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -163,14 +163,14 @@ jobs:
           }
           Expand-Archive -Path $filename -DestinationPath .\
           Remove-Item -Path .\AppxBundle -Recurse -Force -ErrorAction SilentlyContinue # cleanup
-          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-22.04" distros
+          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-24.04" distros
           $distroExe = (Get-ChildItem -Path . -Filter *.exe).Where({ $_.Name -notmatch 'splash|setup' }).FullName
           & $distroExe install --root
           @'
           [boot]
           systemd=true
           '@ | Out-File -FilePath .\wsl.conf -Encoding utf8
-            wsl --distribution Ubuntu-22.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
+            wsl --distribution Ubuntu-24.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
             Write-Output 'Restarting WSL...'
             wsl --shutdown
             # https://learn.microsoft.com/en-us/windows/wsl/wsl-config#the-8-second-rule-for-configuration-changes
@@ -178,13 +178,13 @@ jobs:
             Start-Sleep -Seconds 5
           Write-Output 'Running command to test the installation...'
           Write-Output '-> cat /etc/os-release'
-          wsl --distribution Ubuntu-22.04 cat /etc/os-release # print the distro info
+          wsl --distribution Ubuntu-24.04 cat /etc/os-release # print the distro info
           # add a wrapper script to run commands inside wsl easily using run.shell in github workflows
           @'
           @echo off
           FOR /F "usebackq tokens=*" %%F IN (`wsl wslpath '%~1'`) DO SET wslpath=%%F
-          wsl -d Ubuntu-22.04 sed -i 's/\r$//' %wslpath%
-          wsl -d Ubuntu-22.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
+          wsl -d Ubuntu-24.04 sed -i 's/\r$//' %wslpath%
+          wsl -d Ubuntu-24.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
           '@ | Out-File -FilePath $env:RUNNER_TEMP\wsl-run.bat -Encoding utf8
           $env:RUNNER_TEMP >> $env:GITHUB_PATH
         shell: pwsh
@@ -211,15 +211,15 @@ jobs:
     continue-on-error: true
     steps:
       - run: |
-          # update WSL, download & install Ubuntu-22.04
-          wsl --set-default-version 2; wsl --update; wsl --status;
+          # update WSL, download & install Ubuntu-24.04
+          wsl --update; wsl --set-default-version 2; wsl --update; wsl --status;
         
           $distros = (Invoke-RestMethod -Uri ${{secrets.DISTRI_JSON}}).Distributions
   
           # github runner does support windows arm64 runners, so we don't need to check the architecture
-          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-22.04' }).Amd64PackageUrl
+          $distroDownloadUrl = $distros.Where({ $_.Name -eq 'Ubuntu-24.04' }).Amd64PackageUrl
           Set-Location $env:GITHUB_WORKSPACE\..\.. # don't download in $env:GITHUB_WORKSPACE
-          $filename = "Ubuntu-22.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
+          $filename = "Ubuntu-24.04$([System.IO.Path]::GetExtension($distroDownloadUrl))"
           Write-Output 'Downloading and installing the distro...'
           Invoke-WebRequest -Uri $distroDownloadUrl -OutFile $filename
           if ($filename.EndsWith('.appxbundle', [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -229,14 +229,14 @@ jobs:
           }
           Expand-Archive -Path $filename -DestinationPath .\
           Remove-Item -Path .\AppxBundle -Recurse -Force -ErrorAction SilentlyContinue # cleanup
-          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-22.04" distros
+          # exclude the extra splash and setup exe files that come with "ubuntu" and "ubuntu-24.04" distros
           $distroExe = (Get-ChildItem -Path . -Filter *.exe).Where({ $_.Name -notmatch 'splash|setup' }).FullName
           & $distroExe install --root
           @'
           [boot]
           systemd=true
           '@ | Out-File -FilePath .\wsl.conf -Encoding utf8
-            wsl --distribution Ubuntu-22.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
+            wsl --distribution Ubuntu-24.04 --cd $(Get-Location) cp wsl.conf /etc/wsl.conf
             Write-Output 'Restarting WSL...'
             wsl --shutdown
             # https://learn.microsoft.com/en-us/windows/wsl/wsl-config#the-8-second-rule-for-configuration-changes
@@ -244,13 +244,13 @@ jobs:
             Start-Sleep -Seconds 5
           Write-Output 'Running command to test the installation...'
           Write-Output '-> cat /etc/os-release'
-          wsl --distribution Ubuntu-22.04 cat /etc/os-release # print the distro info
+          wsl --distribution Ubuntu-24.04 cat /etc/os-release # print the distro info
           # add a wrapper script to run commands inside wsl easily using run.shell in github workflows
           @'
           @echo off
           FOR /F "usebackq tokens=*" %%F IN (`wsl wslpath '%~1'`) DO SET wslpath=%%F
-          wsl -d Ubuntu-22.04 sed -i 's/\r$//' %wslpath%
-          wsl -d Ubuntu-22.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
+          wsl -d Ubuntu-24.04 sed -i 's/\r$//' %wslpath%
+          wsl -d Ubuntu-24.04 --cd %GITHUB_WORKSPACE% bash --noprofile --norc -eo pipefail %wslpath%
           '@ | Out-File -FilePath $env:RUNNER_TEMP\wsl-run.bat -Encoding utf8
           $env:RUNNER_TEMP >> $env:GITHUB_PATH
         shell: pwsh
